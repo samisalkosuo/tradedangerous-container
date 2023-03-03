@@ -1,0 +1,25 @@
+name: Container image build and push
+
+on:
+  schedule:
+    - cron: "23 */8 * * *"
+  workflow_dispatch:
+  
+jobs:
+
+  build-and-push:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v3
+    - name: Build the container image
+      run: | 
+        cd container
+        docker build . --file Dockerfile --tag kazhar/trade-dangerous:latest
+    - name: Push the container image
+      run: | 
+        #push to registry
+        echo ${{ secrets.DOCKERHUB_ACCESS_TOKEN }} | docker login --username kazhar --password-stdin
+        docker push kazhar/trade-dangerous:latest
