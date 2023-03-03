@@ -1,0 +1,4 @@
+# tradedangerous-container
+
+Container for https://github.com/eyeonus/Trade-Dangerous[Trade Dangerous].
+
