@@ -1,4 +1,4 @@
-name: Container image build and push
+name: Registry login test
 
 on:
   workflow_dispatch:
