@@ -1,7 +1,3 @@
-#Trade Dangerous container images is
-#automatically generated every 8 hours by GitHub Actions
-#and pushed to registry: docker.io/kazhar/tradedangerous:latest
-
 FROM docker.io/python:3.11-alpine
 
 WORKDIR /tradedangerous
