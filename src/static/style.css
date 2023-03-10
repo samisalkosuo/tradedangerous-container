@@ -39,3 +39,26 @@
 .divTableBody {
 	display: table-row-group;
 }
+
+body{        
+	padding-top: 110px;
+/*	padding-bottom: 40px;*/
+}
+.container{
+	width: 80%;
+	margin: 0 auto; /* Center the DIV horizontally */
+}
+.fixed-header{
+	width: 100%;
+	position: fixed;        
+	padding: 10px 0;
+	background-color: #EEE;
+/*	color: #fff;*/
+}
+.fixed-header{
+	top: 0;
+}
+
+.container p{
+	line-height: 200px; /* Create scrollbar to test positioning */
+}

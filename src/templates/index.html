@@ -1,56 +1,62 @@
 <html>
   <head>
-    <title>Trade Dangerous Web Helper</title>
+    <title>Trade Dangerous - Web Helper</title>
     <link rel="stylesheet" href="{{ cssUrl }}">
+    {% if fontSize %}
+      <style>
+        html * {
+          font-size: {{ fontSize }};
+        }
+      </style>
+    {% endif %}
   </head>
 <body>
-{# 
-  if not find in progress
-form with get method
-fi
-
-show in progress or latest results
-save results
-
-  #}
-  <h1>Trade Dangerous - trade run web helper</h1>
+  <div class="fixed-header">
+  <h1>Trade Dangerous - personal trade run web helper</h1>
   <p>
     <a href="/toggle-help">Toggle help</a>
+    <a href="/toggle-font">Toggle font</a>
+    <a href="/import">Import data</a>
     <a href="/clear-results">Clear results</a>
   </p>
-  <div class="divTable" style="width: 100%;" >
-    <div class="divTableBody">
+</div>
+
+<div class="divTable" style="width: 100%;" >
+  <div class="divTableBody">
     <div class="divTableRow">
       <!-- Left side -->
       <div class="divTableCellLeft">      
       <!-- Enter options for trade -->
       <h3>Run options</h3>
 
-      {% if findInProgress == True %}
-      
-      <p>Trade run in progress... </p>
-      <p>Started {{ tradeTaskStartTime }}...<br/>
-      {{ tradeTaskSinceStart }} seconds ago.
-      </p>      
-      <p>Wait a moment and refresh page.</p>
-      {% else %}
+      {% if importInProgress == True %}
+        <p>Import data in progress... </p>
+      {% endif %}
 
-      <form action="/trade" method="get" autocomplete="off">
-        <p>Options for 'trade run':</p>
-        <textarea id="opts" name="opts" rows="5" cols="80">
-{{ optsString }}
-        </textarea>
-        <br/>
-        <input type="submit" value="Do trade run">
-      </form>
-      
+      {% if findInProgress == True %}      
+        <p>Trade run in progress... </p>
+      {% endif %}
+
+      {% if findInProgress == True or importInProgress == True %}
+        <p>Started {{ taskStartTime }}...<br/>
+        {{ tradeTaskSinceStart }} seconds ago.
+        </p>      
+        <p>Wait a moment and refresh page.</p>
+      {% else %}
+        <form action="/trade" method="get" autocomplete="off">
+          <p>Options for 'trade run':</p>
+          <textarea id="opts" name="opts" rows="5" cols="80">
+{{ optsString }} </textarea>
+          <br/>
+          <input type="submit" value="Do trade run">
+        </form>      
       {% endif %}
       
       <h3>Run results</h3>
       {% if tradeResults %}
-      <p>
-      {{ tradeResults |safe }}
-      </p>
+        <p>
+        {{ tradeResults |safe }}
+        </p>
       {% endif %}
     </div>
     {% if showHelp == True %}    
@@ -58,16 +64,13 @@ save results
       <div class="divTableCellRight">
       <pre>
 {{ helpText }}
-      </pre>
-        
-    </div>
+      </pre>        
+      </div>
     {% endif %}
 
+    </div>
   </div>
-    </div>
-    </div>
+</div>
     <!-- DivTable.com -->
-
-
-  </body>
+</body>
 </html>

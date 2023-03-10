@@ -41,23 +41,28 @@ showHelp = True
 options = ExtractOpts.getOptionsFromEnv()
 
 #trade task start/end timestampe
-tradeTaskStartTime = None
-tradeTaskStartTimestamp = time.time()
+taskStartTime = None
+taskStartTimestamp = time.time()
+
+#import
+importInProgress = False
+
+#font size
+fontSize = None
 
 def findTradeTask(options):
-    global tradeTaskStartTime
-    global tradeTaskStartTimestamp
-    tradeTaskStartTimestamp = int(time.time())
-    tradeTaskStartTime = datetime.now()
-    app.logger.debug(f"Start: {tradeTaskStartTime.isoformat()}")
+    global taskStartTime
+    global taskStartTimestamp
+    taskStartTimestamp = int(time.time())
+    taskStartTime = datetime.now()
+    app.logger.debug(f"Start: {taskStartTime.isoformat()}")
     app.logger.debug(f"Received options: {options}")
-    sleep(3)
     #call trade process
     
     resultFileName = f"traderesult-{time.time()}.txt"
     f = open(resultFileName, "w")
     f.write("===================\n")
-    f.write(f"{tradeTaskStartTime.isoformat()}\n")
+    f.write(f"{taskStartTime.isoformat()}\n")
     f.write(f"trade {tradeCommand} {options}\n\n")    
     f.close()
     #execute trade
@@ -72,6 +77,32 @@ def findTradeTask(options):
 
     app.logger.debug('Execute trade complete.')
 
+def importDataTask():
+  #import latest data
+    global taskStartTime
+    global taskStartTimestamp
+    taskStartTimestamp = int(time.time())
+    taskStartTime = datetime.now()
+    app.logger.debug(f"Start import: {taskStartTime.isoformat()}")
+
+    resultFileName = f"traderesult-{time.time()}.txt"
+    importCmd = "trade import -P eddblink -O all,skipvend"
+    f = open(resultFileName, "w")
+    f.write("===================\n")
+    f.write(f"{taskStartTime.isoformat()}\n")
+    f.write(f"{importCmd}\n\n")    
+    f.close()
+    #execute trade
+    cmd_str = f"{importCmd} >> {resultFileName}"
+    subprocess.run(cmd_str, shell=True)
+
+    global importInProgress
+    importInProgress = False    
+    tradeTaskEndTime = datetime.now()
+
+    app.logger.debug(f"End: {tradeTaskEndTime.isoformat()}")
+
+    app.logger.debug('Execute import complete.')
 
 def getTradeResults():
     #get all trade-*.txt files and output
@@ -100,11 +131,12 @@ def index_html():
                            cssUrl = cssUrl,
                            optsString=opts, 
                            findInProgress=findInProgress,
+                           importInProgress=importInProgress,
                            helpText=helpText,
+                           fontSize=fontSize,
                            showHelp=showHelp,
-                           tradeTaskStartTimestamp=tradeTaskStartTimestamp,
-                           tradeTaskSinceStart=(int(time.time()) - tradeTaskStartTimestamp),
-                           tradeTaskStartTime=tradeTaskStartTime,
+                           tradeTaskSinceStart=(int(time.time()) - taskStartTimestamp),
+                           taskStartTime=taskStartTime,
                            tradeResults=tradeResults)
 
 @app.route("/trade")
@@ -156,4 +188,31 @@ def removeResults():
             os.remove(file)
     return redirect(url_for('index_html'))
 
+@app.route("/import")
+def importData():
+    global importInProgress
+    global findInProgress
+    if importInProgress == False and findInProgress == False:
+        #get args
+        #start thread to call trade command
+        thread = Thread(target=importDataTask)
+        thread.start()
+        importInProgress = True
+
+    return redirect(url_for('index_html'))
+
+@app.route("/toggle-font")
+def toggleFont():
+    global fontSize
+    #check current fontSize and set new fontSize
+    match fontSize:
+        case None:
+            fontSize = "24px"
+        case "24px":
+            fontSize = "32px"
+        case "32px":
+            fontSize = None        
+        case _:
+            fontSize = None
+    return redirect(url_for('index_html'))
 
