@@ -2,7 +2,7 @@ name: Container image build and push
 
 on:
   schedule:
-    - cron: "23 */8 * * *"
+    - cron: "23 */12 * * *"
   workflow_dispatch:
   
 jobs:
