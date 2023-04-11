@@ -1,8 +1,9 @@
 name: Container image build and push
 
 on:
-  schedule:
-    - cron: "23 */12 * * *"
+  #schedule removed 11.4.2023 because eddb no longer exists
+  #schedule:
+  #  - cron: "23 */12 * * *"
   workflow_dispatch:
   
 jobs:
